@@ -47,7 +47,8 @@
         navigator.serviceWorker
           .register('/html/serviceWorker.js', { scope: '/html/' })
           .then(reg => console.log('Service Worker registered'))
-          .catch(err => console.log('Service Worker registration failed: er    });
+          .catch(err => console.log('Service Worker registration failed:', err));
+      });
     }
   </script>
 </body>
