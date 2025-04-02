@@ -38,6 +38,7 @@ function App() {
         const response = await fetch('/html/nvidia_intraday_15min_data.csv');
         const csvText = await response.text();
 
+        
         // Parse CSV data
         const lines = csvText.trim().split('\n');
         const headers = lines[0].split(',');
