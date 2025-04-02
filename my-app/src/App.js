@@ -418,207 +418,191 @@ function App() {
   // Handle mouse leave event on chart
   const handleMouseLeave = () => {
     setIsHovering(false);
-
-    const latestData = portfolioData[portfolioData.length - 1];
-    setCurrentValue(`$${latestData.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
-
-    // Calculate change from initial balance, not from originalValue
-    const changeAmount = latestData.value - initialBalance;
-    const changePercent = (changeAmount / initialBalance) * 100;
-
-    setChange({
-      value: `$${Math.abs(changeAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-      percent: `${Math.abs(changePercent).toFixed(2)}%`,
-      isNegative: changeAmount < 0
-    });
+    if (portfolioData.length > 0) {
+      const latestData = portfolioData[portfolioData.length - 1];
+      setCurrentValue(`$${latestData.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
+    }
   };
 
   // Helper function to format dates
   const formatDate = (dateString) => {
-    const options = { month: 'short', day: 'numeric', year: 'numeric' };
-    return new Date(dateString).toLocaleDateString('en-US', options);
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
+
+  // Add loading and error handling
+  if (isLoading) {
+    return (
+      <div className="app-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <div>Loading...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="app-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <div style={{ color: 'red' }}>{error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="app">
-      {isLoading ? (
-        <div className="loading">
-          <svg width="50" height="50" viewBox="0 0 50 50">
-            <circle cx="25" cy="25" r="20" fill="none" stroke="#00c805" strokeWidth="4" strokeDasharray="60 30">
-              <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 25 25" to="360 25 25" dur="1s" repeatCount="indefinite" />
-            </circle>
-          </svg>
-          <div className="loading-text">Loading stock data...</div>
+      <div className="nav-icons">
+        <div className="search-icon">
+          <i className="fas fa-search"></i>
         </div>
-      ) : error ? (
-        <div className="error">
-          <i className="fas fa-exclamation-circle" style={{ fontSize: '48px', color: '#ff5000' }}></i>
-          <div className="error-text">{error}</div>
-          <button
-            onClick={() => window.location.reload()}
-            style={{ marginTop: '20px', padding: '10px 20px', background: '#00c805', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        <div className="notifications">
+          <i className="fas fa-bell"></i>
+          <span className="notification-badge">1</span>
+        </div>
+      </div>
+
+      <div className="header">
+        <div className="investing-header">
+          Investing
+          <i className="fas fa-chevron-down"></i>
+        </div>
+        <div className="gold-badge">Gold</div>
+      </div>
+
+      <div className="portfolio-value">{currentValue}</div>
+
+      <div className={`portfolio-change ${change.isNegative ? 'portfolio-change-negative' : 'portfolio-change-positive'}`}>
+        <i className={`fas fa-arrow-${change.isNegative ? 'down' : 'up'}`}></i>
+        &nbsp;{change.value} ({change.percent})
+      </div>
+
+      <div className="time-label">{currentTimeLabel}</div>
+
+      <div className="chart-container">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={getChartData()}
+            margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
           >
-            Try Again
-          </button>
+            <Line
+              type="monotone"
+              dataKey="value"
+              stroke={change.isNegative ? "#ff5000" : "#00c805"}
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 5, fill: change.isNegative ? "#ff5000" : "#00c805" }}
+              isAnimationActive={false}
+            />
+            <XAxis dataKey="time" hide={true} />
+            <YAxis domain={['dataMin', 'dataMax']} hide={true} />
+            <ReferenceLine y={initialBalance} stroke="#ccc" strokeDasharray="3 3" />
+            <Tooltip
+              formatter={(value) => [`$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 'Value']}
+              labelFormatter={(label) => label}
+              contentStyle={{ backgroundColor: '#f5f5f5', border: 'none' }}
+              cursor={{ stroke: '#ccc', strokeWidth: 1 }}
+              isAnimationActive={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div className="chart-timeframe">
+        <button
+          className={`timeframe-button ${timeframe === '1D' ? 'active' : ''}`}
+          onClick={() => setTimeframe('1D')}
+        >
+          1D
+        </button>
+        <button
+          className={`timeframe-button ${timeframe === '1W' ? 'active' : ''}`}
+          onClick={() => setTimeframe('1W')}
+        >
+          1W
+        </button>
+        <button
+          className={`timeframe-button ${timeframe === '1M' ? 'active' : ''}`}
+          onClick={() => setTimeframe('1M')}
+        >
+          1M
+        </button>
+        <button
+          className={`timeframe-button ${timeframe === '3M' ? 'active' : ''}`}
+          onClick={() => setTimeframe('3M')}
+        >
+          3M
+        </button>
+        <button
+          className={`timeframe-button ${timeframe === 'YTD' ? 'active' : ''}`}
+          onClick={() => setTimeframe('YTD')}
+        >
+          YTD
+        </button>
+        <button
+          className={`timeframe-button ${timeframe === '1Y' ? 'active' : ''}`}
+          onClick={() => setTimeframe('1Y')}
+        >
+          1Y
+        </button>
+        <button
+          className={`timeframe-button ${timeframe === 'ALL' ? 'active' : ''}`}
+          onClick={() => setTimeframe('ALL')}
+        >
+          ALL
+        </button>
+        <button className="settings-button">
+          <i className="fas fa-cog"></i>
+        </button>
+      </div>
+
+      <div className="buying-power">
+        <div>Buying power</div>
+        <div className="buying-power-value">{buyingPower} &gt;</div>
+      </div>
+
+      <div className="reward-card">
+        <button className="close-button">
+          <i className="fas fa-times"></i>
+        </button>
+        <div className="reward-icon">
+          <div className="reward-circle"></div>
+          <div className="reward-circle"></div>
+          <div className="reward-circle"></div>
+          <div className="reward-circle"></div>
         </div>
-      ) : (
-        <>
-          <div className="nav-icons">
-            <div className="search-icon">
-              <i className="fas fa-search"></i>
-            </div>
-            <div className="notifications">
-              <i className="fas fa-bell"></i>
-              <span className="notification-badge">1</span>
-            </div>
+        <div className="reward-content">
+          <div className="reward-header">
+            <i className="fas fa-star"></i>
+            Claim your reward
           </div>
-
-          <div className="header">
-            <div className="investing-header">
-              Investing
-              <i className="fas fa-chevron-down"></i>
-            </div>
-            <div className="gold-badge">Gold</div>
+          <div className="reward-text">
+            Your Robinhood Trivia Live DOGE reward is ready. Claim it before it expires on Apr 5.
           </div>
-
-          <div className="portfolio-value">{currentValue}</div>
-
-          <div className={`portfolio-change ${change.isNegative ? 'portfolio-change-negative' : 'portfolio-change-positive'}`}>
-            <i className={`fas fa-arrow-${change.isNegative ? 'down' : 'up'}`}></i>
-            &nbsp;{change.value} ({change.percent})
+          <div className="reward-claim">
+            Claim your DOGE
           </div>
+          <div className="reward-progress">1/1</div>
+        </div>
+      </div>
 
-          <div className="time-label">{currentTimeLabel}</div>
-
-          <div className="chart-container">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={getChartData()}
-                margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
-              >
-                <Line
-                  type="monotone"
-                  dataKey="value"
-                  stroke={change.isNegative ? "#ff5000" : "#00c805"}
-                  strokeWidth={2}
-                  dot={false}
-                  activeDot={{ r: 5, fill: change.isNegative ? "#ff5000" : "#00c805" }}
-                  isAnimationActive={false}
-                />
-                <XAxis dataKey="time" hide={true} />
-                <YAxis domain={['dataMin', 'dataMax']} hide={true} />
-                <ReferenceLine y={initialBalance} stroke="#ccc" strokeDasharray="3 3" />
-                <Tooltip
-                  formatter={(value) => [`$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 'Value']}
-                  labelFormatter={(label) => label}
-                  contentStyle={{ backgroundColor: '#f5f5f5', border: 'none' }}
-                  cursor={{ stroke: '#ccc', strokeWidth: 1 }}
-                  isAnimationActive={false}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="chart-timeframe">
-            <button
-              className={`timeframe-button ${timeframe === '1D' ? 'active' : ''}`}
-              onClick={() => setTimeframe('1D')}
-            >
-              1D
-            </button>
-            <button
-              className={`timeframe-button ${timeframe === '1W' ? 'active' : ''}`}
-              onClick={() => setTimeframe('1W')}
-            >
-              1W
-            </button>
-            <button
-              className={`timeframe-button ${timeframe === '1M' ? 'active' : ''}`}
-              onClick={() => setTimeframe('1M')}
-            >
-              1M
-            </button>
-            <button
-              className={`timeframe-button ${timeframe === '3M' ? 'active' : ''}`}
-              onClick={() => setTimeframe('3M')}
-            >
-              3M
-            </button>
-            <button
-              className={`timeframe-button ${timeframe === 'YTD' ? 'active' : ''}`}
-              onClick={() => setTimeframe('YTD')}
-            >
-              YTD
-            </button>
-            <button
-              className={`timeframe-button ${timeframe === '1Y' ? 'active' : ''}`}
-              onClick={() => setTimeframe('1Y')}
-            >
-              1Y
-            </button>
-            <button
-              className={`timeframe-button ${timeframe === 'ALL' ? 'active' : ''}`}
-              onClick={() => setTimeframe('ALL')}
-            >
-              ALL
-            </button>
-            <button className="settings-button">
-              <i className="fas fa-cog"></i>
-            </button>
-          </div>
-
-          <div className="buying-power">
-            <div>Buying power</div>
-            <div className="buying-power-value">{buyingPower} &gt;</div>
-          </div>
-
-          <div className="reward-card">
-            <button className="close-button">
-              <i className="fas fa-times"></i>
-            </button>
-            <div className="reward-icon">
-              <div className="reward-circle"></div>
-              <div className="reward-circle"></div>
-              <div className="reward-circle"></div>
-              <div className="reward-circle"></div>
-            </div>
-            <div className="reward-content">
-              <div className="reward-header">
-                <i className="fas fa-star"></i>
-                Claim your reward
-              </div>
-              <div className="reward-text">
-                Your Robinhood Trivia Live DOGE reward is ready. Claim it before it expires on Apr 5.
-              </div>
-              <div className="reward-claim">
-                Claim your DOGE
-              </div>
-              <div className="reward-progress">1/1</div>
-            </div>
-          </div>
-
-          <div className="bottom-nav">
-            <div className="nav-item active">
-              <i className="fas fa-chart-line"></i>
-            </div>
-            <div className="nav-item">
-              <i className="far fa-clock"></i>
-            </div>
-            <div className="nav-item">
-              <i className="fas fa-search"></i>
-            </div>
-            <div className="nav-item">
-              <i className="far fa-newspaper"></i>
-            </div>
-            <div className="nav-item">
-              <i className="far fa-user"></i>
-            </div>
-          </div>
-          <div className="home-indicator"></div>
-        </>
-      )}
+      <div className="bottom-nav">
+        <div className="nav-item active">
+          <i className="fas fa-chart-line"></i>
+        </div>
+        <div className="nav-item">
+          <i className="far fa-clock"></i>
+        </div>
+        <div className="nav-item">
+          <i className="fas fa-search"></i>
+        </div>
+        <div className="nav-item">
+          <i className="far fa-newspaper"></i>
+        </div>
+        <div className="nav-item">
+          <i className="far fa-user"></i>
+        </div>
+      </div>
+      <div className="home-indicator"></div>
     </div>
   );
 }
