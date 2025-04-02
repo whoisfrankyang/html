@@ -35,7 +35,7 @@ function App() {
     const fetchStockData = async () => {
       try {
         // Load the 15-minute NVIDIA data from the CSV file
-        const response = await fetch('/html/nvidia_intraday_15min_data.csv');
+        const response = await fetch('./nvidia_intraday_15min_data.csv');
         const csvText = await response.text();
 
         // Parse CSV data
@@ -418,9 +418,11 @@ function App() {
   // Handle mouse leave event on chart
   const handleMouseLeave = () => {
     setIsHovering(false);
-    if (portfolioData.length > 0) {
+    if (portfolioData && portfolioData.length > 0) {
       const latestData = portfolioData[portfolioData.length - 1];
-      setCurrentValue(`$${latestData.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
+      if (latestData && typeof latestData.value !== 'undefined') {
+        setCurrentValue(`$${latestData.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
+      }
     }
   };
 
