@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Generate Icons</title>
+</head>
+
+<body>
+  <canvas id="canvas64" width="64" height="64" style="border:1px solid #000"></canvas>
+  <canvas id="canvas192" width="192" height="192" style="border:1px solid #000"></canvas>
+  <canvas id="canvas512" width="512" height="512" style="border:1px solid #000"></canvas>
+
+  <script>
+    function drawIcon(canvas, size) {
+      const ctx = canvas.getContext('2d');
+
+      // Background
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(0, 0, size, size);
+
+      // Create gradient for a more modern look
+      const gradient = ctx.createLinearGradient(0, 0, size, size);
+      gradient.addColorStop(0, '#4CAF50');
+      gradient.addColorStop(1, '#2E7D32');
+
+      // Dollar sign with gradient
+      ctx.fillStyle = gradient;
+      ctx.font = `bold ${size * 0.6}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('$', size / 2, size / 2);
+
+      // Add a subtle shadow
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+      ctx.shadowBlur = size * 0.05;
+      ctx.shadowOffsetX = size * 0.02;
+      ctx.shadowOffsetY = size * 0.02;
+
+      // Download link
+      const link = document.createElement('a');
+      link.download = size === 64 ? 'favicon.png' : `logo${size}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    // Generate all icons
+    drawIcon(document.getElementById('canvas64'), 64);
+    drawIcon(document.getElementById('canvas192'), 192);
+    drawIcon(document.getElementById('canvas512'), 512);
+  </script>
+</body>
+
+</html>
