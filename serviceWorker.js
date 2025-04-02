@@ -1,11 +1,14 @@
 const CACHE_NAME = 'investing-app-v1';
 const urlsToCache = [
-  '/html/',
-  '/html/index.html',
-  '/html/manifest.json',
-  '/html/logo192.png',
-  '/html/logo512.png',
-  '/html/favicon.png'
+  '.',
+  './index.html',
+  './manifest.json',
+  './logo192.png',
+  './logo512.png',
+  './favicon.ico',
+  './static/css/main.*.css',
+  './static/js/main.*.js',
+  './static/js/bundle.*.js'
 ];
 
 // Install a service worker
