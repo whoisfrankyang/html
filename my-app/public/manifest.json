@@ -3,9 +3,9 @@
   "name": "Investing App",
   "icons": [
     {
-      "src": "/html/favicon.png",
+      "src": "/html/favicon.ico",
       "sizes": "64x64",
-      "type": "image/png"
+      "type": "image/x-icon"
     },
     {
       "src": "/html/logo192.png",

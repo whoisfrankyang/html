@@ -5,7 +5,8 @@ const urlsToCache = [
   '/html/manifest.json',
   '/html/logo192.png',
   '/html/logo512.png',
-  '/html/favicon.png'
+  '/html/favicon.ico',
+  '/html/nvidia_intraday_15min_data.csv'
 ];
 
 // Install a service worker
