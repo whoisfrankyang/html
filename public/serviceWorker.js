@@ -1,15 +1,10 @@
 const CACHE_NAME = 'investing-app-v1';
 const urlsToCache = [
   '/',
-  '/index.html',
-  '/static/js/main.chunk.js',
-  '/static/js/0.chunk.js',
-  '/static/js/bundle.js',
   '/manifest.json',
   '/logo192.png',
   '/logo512.png',
-  '/favicon.ico',
-  '/nvidia_intraday_15min_data.csv'
+  '/favicon.ico'
 ];
 
 // Install a service worker
