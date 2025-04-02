@@ -43,8 +43,9 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
+        const swUrl = `${process.env.PUBLIC_URL}/serviceWorker.js`;
         navigator.serviceWorker
-          .register('/serviceWorker.js')
+          .register(swUrl)
           .then(reg => console.log('Service Worker registered'))
           .catch(err => console.log('Service Worker registration failed:', err));
       });
