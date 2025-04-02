@@ -1,14 +1,14 @@
 const CACHE_NAME = 'investing-app-v1';
 const urlsToCache = [
   '.',
-  './index.html',
-  './manifest.json',
-  './logo192.png',
-  './logo512.png',
-  './favicon.ico',
-  './static/css/main.*.css',
-  './static/js/main.*.js',
-  './static/js/bundle.*.js'
+  'index.html',
+  'manifest.json',
+  'logo192.png',
+  'logo512.png',
+  'favicon.ico',
+  'static/css/main.a90459dd.css',
+  'static/js/main.43ad86fb.js',
+  'static/js/453.68693753.chunk.js'
 ];
 
 // Install a service worker
@@ -17,7 +17,13 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('Opened cache');
-        return cache.addAll(urlsToCache);
+        return Promise.all(
+          urlsToCache.map(url => {
+            return cache.add(url).catch(err => {
+              console.log('Failed to cache:', url, err);
+            });
+          })
+        );
       })
   );
 });
