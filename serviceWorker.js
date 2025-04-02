@@ -8,7 +8,8 @@ const urlsToCache = [
   'favicon.ico',
   'static/css/main.a90459dd.css',
   'static/js/main.43ad86fb.js',
-  'static/js/453.68693753.chunk.js'
+  'static/js/453.68693753.chunk.js',
+  'html/nvidia_intraday_15min_data.csv'
 ];
 
 // Install a service worker
