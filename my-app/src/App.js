@@ -35,7 +35,7 @@ function App() {
     const fetchStockData = async () => {
       try {
         // Load the 15-minute NVIDIA data from the CSV file
-        const response = await fetch('/html/nvidia_intraday_15min_data.csv');
+        const response = await fetch('./html/nvidia_intraday_15min_data.csv');
         const csvText = await response.text();
 
         // Parse CSV data
