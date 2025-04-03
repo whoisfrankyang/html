@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: white;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  /* Prevent body scrollbar */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.app-container {
+  height: 100vh;
+  background: white;
+  color: black;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  /* Allow content to grow */
+  overflow-y: auto;
+  position: relative;
+  background: white;
+  padding-top: 16px;
+  padding-bottom: 83px;
+  /* Space for bottom nav */
+}
+
+.bottom-nav {
+  /* position: fixed; no longer needed if part of flex layout */
+  height: 83px;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 16px;
+  padding-bottom: 20px;
+  z-index: 10;
+  flex-shrink: 0;
+  /* Prevent nav from shrinking */
+}
+
+.chart-container {
+  height: 380px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.timeframe-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  margin-top: 16px;
+}
+
+/* Hide scrollbar but allow scrolling */
+.main-content::-webkit-scrollbar {
+  display: none;
+}
+
+.main-content {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
